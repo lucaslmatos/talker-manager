@@ -1,6 +1,5 @@
 const express = require('express');
-const fs = require('fs/promises');
-const { join } = require('path');
+const { getData, generateToken } = require('./functions');
 
 const app = express();
 app.use(express.json());
@@ -13,19 +12,17 @@ app.get('/', (_request, response) => {
   response.status(HTTP_OK_STATUS).send();
 });
 
-const getData = async () => {
-  const path = '/talker.json';
-  const content = await fs.readFile(join(__dirname, path), 'utf-8');
-  const data = JSON.parse(content);
-  return data;
-};
-
 app.get('/talker', async (req, res) => {
-  const data = await getData();
+  try {
+    const data = await getData();
     return res.status(200).json(data) || res.status(200).json([]);
+  } catch (e) {
+    return res.status(500).send({ message: e.message });
+  }
 });
 
 app.get('/talker/:id', async (req, res) => {
+  try {
   const { id } = req.params;
   const data = await getData();
   const talker = data.find((tk) => tk.id === +id);
@@ -33,6 +30,14 @@ app.get('/talker/:id', async (req, res) => {
     return res.status(200).json(talker); 
   } 
     return res.status(404).json({ message: 'Pessoa palestrante não encontrada' });
+  } catch (e) {
+    return res.status(500).send({ message: e.message });
+  } 
+});
+
+app.post('/login', (req, res) => {
+  const atualToken = generateToken(16);
+  return res.status(200).json({ token: atualToken });
 });
 
 app.listen(PORT, () => {
