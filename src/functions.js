@@ -130,6 +130,17 @@ const editPerson = async (personId, person) => {
   return 'erro';
 };
 
+const deletePerson = async (personId) => {
+  const editedData = await getData();
+  const editedIn = editedData.findIndex((p) => +p.id === +personId);
+  if (editedIn !== -1) {
+     delete editedData[editedIn];
+    await fs.writeFile(join(__dirname, './talker.json'), JSON.stringify(editedData));
+    return 'ok';
+  }
+  return 'erro';
+};
+
 module.exports = {
  getData,
  generateToken,
@@ -141,4 +152,5 @@ module.exports = {
  validadeTalkRate,
  addPerson,
  editPerson,
+ deletePerson,
 };
