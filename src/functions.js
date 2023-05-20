@@ -114,7 +114,20 @@ const addPerson = async (data, newPerson) => {
   const atualPerson = { ...newPerson, id: atualId };
   const atualData = [...data, atualPerson];
   await fs.writeFile(join(__dirname, './talker.json'), JSON.stringify(atualData));
-  return 'oi';
+};
+
+const editPerson = async (personId, person) => {
+  const editedData = await getData();
+  const editedIn = editedData.findIndex((p) => +p.id === +personId);
+  if (editedIn !== -1) {
+    editedData[editedIn].name = person.name;
+    editedData[editedIn].age = person.age;
+    editedData[editedIn].talk.watchedAt = person.talk.watchedAt;
+    editedData[editedIn].talk.rate = person.talk.rate;
+    await fs.writeFile(join(__dirname, './talker.json'), JSON.stringify(editedData));
+    return 'ok';
+  }
+  return 'erro';
 };
 
 module.exports = {
@@ -127,4 +140,5 @@ module.exports = {
  validateTalkwatchedAt,
  validadeTalkRate,
  addPerson,
+ editPerson,
 };

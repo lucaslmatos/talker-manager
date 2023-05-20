@@ -1,7 +1,7 @@
 const express = require('express');
 const { getData, generateToken, validateLogin, 
   validateToken, validateName, validateAge, validateTalkwatchedAt, 
-  validadeTalkRate, addPerson } = require('./functions');
+  validadeTalkRate, addPerson, editPerson } = require('./functions');
 
 const app = express();
 app.use(express.json());
@@ -27,7 +27,19 @@ app.post('/talker', validateToken, validateName, validateAge,
 validateTalkwatchedAt, validadeTalkRate, async (req, res) => {
   addPerson(await getData(), req.body);
   const data = await getData();
-  res.status(201).json(data[data.length - 1]);
+  return res.status(201).json(data[data.length - 1]);
+});
+
+app.put('/talker/:id', validateToken, validateName, validateAge,
+validateTalkwatchedAt, validadeTalkRate, async (req, res) => {
+    const { id } = req.params;
+    const status = await editPerson(id, req.body);
+    if (status === 'ok') {
+    const data = await getData();
+    const person = data.find((p) => +p.id === +id);
+    return res.status(200).json(person);
+    }
+    return res.status(404).json({ message: 'Pessoa palestrante não encontrada' });
 });
 
 app.get('/talker/:id', async (req, res) => {
