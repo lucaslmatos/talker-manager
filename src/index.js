@@ -1,5 +1,7 @@
 const express = require('express');
-const { getData, generateToken, validadeLogin } = require('./functions');
+const { getData, generateToken, validateLogin, 
+  validateToken, validateName, validateAge, validateTalkwatchedAt, 
+  validadeTalkRate, addPerson } = require('./functions');
 
 const app = express();
 app.use(express.json());
@@ -21,6 +23,13 @@ app.get('/talker', async (req, res) => {
   }
 });
 
+app.post('/talker', validateToken, validateName, validateAge,
+validateTalkwatchedAt, validadeTalkRate, async (req, res) => {
+  addPerson(await getData(), req.body);
+  const data = await getData();
+  res.status(201).json(data[data.length - 1]);
+});
+
 app.get('/talker/:id', async (req, res) => {
   try {
   const { id } = req.params;
@@ -31,11 +40,11 @@ app.get('/talker/:id', async (req, res) => {
   } 
     return res.status(404).json({ message: 'Pessoa palestrante não encontrada' });
   } catch (e) {
-    return res.status(500).send({ message: e.message });
+    return res.status(500).json({ message: e.message });
   } 
 });
 
-app.post('/login', validadeLogin, (req, res) => {
+app.post('/login', validateLogin, (req, res) => {
   const atualToken = generateToken(16);
   return res.status(200).json({ token: atualToken });
 });
