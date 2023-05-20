@@ -1,5 +1,5 @@
 const express = require('express');
-const { getData, generateToken } = require('./functions');
+const { getData, generateToken, validadeLogin } = require('./functions');
 
 const app = express();
 app.use(express.json());
@@ -35,7 +35,7 @@ app.get('/talker/:id', async (req, res) => {
   } 
 });
 
-app.post('/login', (req, res) => {
+app.post('/login', validadeLogin, (req, res) => {
   const atualToken = generateToken(16);
   return res.status(200).json({ token: atualToken });
 });
