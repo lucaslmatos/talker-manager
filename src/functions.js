@@ -1,9 +1,11 @@
 const fs = require('fs/promises');
+const path = require('path');
 const { join } = require('path');
 
+const path2 = './talker.json';
+
 const getData = async () => {
-  const path = './talker.json';
-  const content = await fs.readFile(join(__dirname, path), 'utf-8');
+  const content = await fs.readFile(join(__dirname, path2), 'utf-8');
   const data = JSON.parse(content);
   return data;
 };
@@ -193,7 +195,7 @@ const editId = async (personId, rate) => {
   const editedIn = editedData.findIndex((p) => +p.id === +personId);
   if (editedIn !== -1) {
     editedData[editedIn].talk.rate = rate;
-    await fs.writeFile(join(__dirname, './talker.json'), JSON.stringify(editedData));
+    await fs.writeFile(join(__dirname, path2), JSON.stringify(editedData));
     return 'ok';
   }
   return 'erro';
