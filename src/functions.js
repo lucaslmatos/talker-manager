@@ -141,6 +141,12 @@ const deletePerson = async (personId) => {
   return 'erro';
 };
 
+const searchPerson = async (personName) => {
+  const list = await getData();
+  const listSearched = list.filter((p) => p.name.includes(personName));
+  return listSearched;
+};
+
 module.exports = {
  getData,
  generateToken,
@@ -153,4 +159,5 @@ module.exports = {
  addPerson,
  editPerson,
  deletePerson,
+ searchPerson,
 };

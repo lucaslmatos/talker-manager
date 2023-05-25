@@ -1,7 +1,7 @@
 const express = require('express');
 const { getData, generateToken, validateLogin, 
   validateToken, validateName, validateAge, validateTalkwatchedAt, 
-  validadeTalkRate, addPerson, editPerson, deletePerson } = require('./functions');
+  validadeTalkRate, addPerson, editPerson, deletePerson, searchPerson } = require('./functions');
 
 const app = express();
 app.use(express.json());
@@ -49,6 +49,16 @@ app.delete('/talker/:id', validateToken, async (req, res) => {
     return res.status(204).json();
     }
     return res.status(404).json({ message: 'Pessoa palestrante não encontrada' });
+});
+
+app.get('/talker/search', validateToken, async (req, res) => {
+  try {
+  const searched = req.query.q;
+  const response = await searchPerson(searched);
+  return res.status(200).json(response); 
+  } catch (e) {
+  return res.status(500).json({ message: e.message });
+  } 
 });
 
 app.get('/talker/:id', async (req, res) => {
