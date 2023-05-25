@@ -188,19 +188,17 @@ const searchPerson = async (personName, personRate, personDate) => {
   return searchedList;
 };
 
-const editId = async (personId, person) => {
+const editId = async (personId, rate) => {
   const editedData = await getData();
   const editedIn = editedData.findIndex((p) => +p.id === +personId);
   if (editedIn !== -1) {
-    editedData[editedIn].name = person.name;
-    editedData[editedIn].age = person.age;
-    editedData[editedIn].talk.watchedAt = person.talk.watchedAt;
-    editedData[editedIn].talk.rate = person.talk.rate;
+    editedData[editedIn].talk.rate = rate;
     await fs.writeFile(join(__dirname, './talker.json'), JSON.stringify(editedData));
     return 'ok';
   }
   return 'erro';
 };
+
 module.exports = {
  getData,
  generateToken,
