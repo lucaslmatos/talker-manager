@@ -1,8 +1,9 @@
 const express = require('express');
 const { getData, generateToken, validateLogin, editId, 
-  validateToken, validateName, validateAge, validateTalkwatchedAt, 
-  validadeTalkRate, addPerson, editPerson, deletePerson, searchPerson, 
-  validadePatchRate } = require('./functions');
+validateToken, validateName, validateAge, validateTalkwatchedAt, 
+validadeTalkRate, addPerson, editPerson, deletePerson, searchPerson, 
+validadePatchRate } = require('./functions');
+const connection = require('./db/connection');
 
 const app = express();
 app.use(express.json());
@@ -70,6 +71,22 @@ app.get('/talker/search', validateToken, async (req, res) => {
   } 
 });
 
+app.get('/talker/db', async (req, res) => {
+  const [talkers] = await connection.execute('SELECT * FROM talkers');
+  const newTalkers = talkers.map((t) => ({
+    ...t,
+    talk: {
+      watchedAt: t.talk_watched_at,
+      rate: t.talk_rate,
+    },
+  }));
+  for (let i = 0; i < newTalkers.length; i += 1) {
+    delete newTalkers[i].talk_watched_at;
+    delete newTalkers[i].talk_rate;
+  }
+  return res.status(200).json(newTalkers);
+});
+
 app.get('/talker/:id', async (req, res) => {
   try {
   const { id } = req.params;
@@ -89,8 +106,12 @@ app.post('/login', validateLogin, (req, res) => {
   return res.status(200).json({ token: atualToken });
 });
 
-app.listen(PORT, () => {
+app.listen(PORT, async () => {
   console.log('Online');
+  const [result] = await connection.execute('SELECT 1');
+  if (result) {
+    console.log('MySQL connection OK');
+  }
 });
 
 app.patch('/talker/rate/:id', validateToken, validadePatchRate, async (req, res) => {

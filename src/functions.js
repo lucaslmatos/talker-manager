@@ -23,12 +23,8 @@ const generateToken = (length) => {
 const validateLogin = (req, res, next) => {
   const { email, password } = req.body;
   const rg = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-  if (!email) {
-    return res.status(400).json({ message: 'O campo "email" é obrigatório' });
-  }
-  if (!password) {
-    return res.status(400).json({ message: 'O campo "password" é obrigatório' });
-  }
+  if (!email) { return res.status(400).json({ message: 'O campo "email" é obrigatório' }); }
+  if (!password) { return res.status(400).json({ message: 'O campo "password" é obrigatório' }); }
   if (!rg.test(email)) {
     return res.status(400).json({ message: 'O "email" deve ter o formato "email@email.com"' });
   }
@@ -202,7 +198,7 @@ const editId = async (personId, rate) => {
 };
 
 module.exports = {
- getData,
+ getData, 
  generateToken,
  validateLogin,
  validateToken,
