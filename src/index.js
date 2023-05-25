@@ -53,8 +53,16 @@ app.delete('/talker/:id', validateToken, async (req, res) => {
 
 app.get('/talker/search', validateToken, async (req, res) => {
   try {
-  const searched = req.query.q;
-  const response = await searchPerson(searched);
+  const { q, rate, date } = req.query;
+  const response = await searchPerson(q, rate, date);
+  if (response === 'rError') {
+    return res.status(400).json({ 
+      message: 'O campo "rate" deve ser um número inteiro entre 1 e 5' }); 
+  }
+  if (response === 'dError') {
+    return res.status(400).json({ message: 
+      'O parâmetro "date" deve ter o formato "dd/mm/aaaa"' });
+  }
   return res.status(200).json(response); 
   } catch (e) {
   return res.status(500).json({ message: e.message });

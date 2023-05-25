@@ -141,10 +141,36 @@ const deletePerson = async (personId) => {
   return 'erro';
 };
 
-const searchPerson = async (personName) => {
+const checkRate = (rate) => {
+  if (rate && (!validadeRate(rate) || !Number.isInteger(+rate))) {
+    return true;
+  }
+};
+
+const checkDate = (date) => {
+  const rg = /^(\d{2})\/(\d{2})\/(\d{4})$/;
+  if (date && !rg.test(date)) {
+    return true;
+  }
+};
+
+const finalList = (list, q, r, d) => {
+  const listByName = q ? list.filter((p) => p.name.includes(q)) : list;
+  const listByRate = r ? listByName.filter((p) => +p.talk.rate === +r) : listByName;
+  const finList = d ? listByRate.filter((p) => p.talk.watchedAt === d) : listByRate;
+  return finList;
+};
+
+const searchPerson = async (personName, personRate, personDate) => {
   const list = await getData();
-  const listSearched = list.filter((p) => p.name.includes(personName));
-  return listSearched;
+  if (checkRate(personRate)) {
+    return 'rError';
+  }
+  if (checkDate(personDate)) {
+    return 'dError';
+  }
+  const searchedList = finalList(list, personName, personRate, personDate);
+  return searchedList;
 };
 
 module.exports = {
