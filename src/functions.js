@@ -109,6 +109,21 @@ const validadeTalkRate = (req, res, next) => {
 }
 };
 
+const validadePatchRate = (req, res, next) => {
+  try {
+    const { rate } = req.body;
+  if (Number.isInteger(rate) && validadeRate(rate)) {
+    return next();
+  }
+  if (rate === undefined) {
+    return res.status(400).json({ message: 'O campo "rate" é obrigatório' });
+  }
+  return res.status(400).json({ message: 'O campo "rate" deve ser um número inteiro entre 1 e 5' });
+} catch (e) {
+  return res.status(400).json({ message: 'O campo "talk" é obrigatório' });
+}
+};
+
 const addPerson = async (data, newPerson) => {
   const atualId = data[data.length - 1].id + 1;
   const atualPerson = { ...newPerson, id: atualId };
@@ -173,6 +188,19 @@ const searchPerson = async (personName, personRate, personDate) => {
   return searchedList;
 };
 
+const editId = async (personId, person) => {
+  const editedData = await getData();
+  const editedIn = editedData.findIndex((p) => +p.id === +personId);
+  if (editedIn !== -1) {
+    editedData[editedIn].name = person.name;
+    editedData[editedIn].age = person.age;
+    editedData[editedIn].talk.watchedAt = person.talk.watchedAt;
+    editedData[editedIn].talk.rate = person.talk.rate;
+    await fs.writeFile(join(__dirname, './talker.json'), JSON.stringify(editedData));
+    return 'ok';
+  }
+  return 'erro';
+};
 module.exports = {
  getData,
  generateToken,
@@ -182,8 +210,10 @@ module.exports = {
  validateAge,
  validateTalkwatchedAt,
  validadeTalkRate,
+ validadePatchRate,
  addPerson,
  editPerson,
  deletePerson,
  searchPerson,
+ editId,
 };

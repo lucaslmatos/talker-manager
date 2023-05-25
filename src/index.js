@@ -1,7 +1,8 @@
 const express = require('express');
-const { getData, generateToken, validateLogin, 
+const { getData, generateToken, validateLogin, editId, 
   validateToken, validateName, validateAge, validateTalkwatchedAt, 
-  validadeTalkRate, addPerson, editPerson, deletePerson, searchPerson } = require('./functions');
+  validadeTalkRate, addPerson, editPerson, deletePerson, searchPerson, 
+  validadePatchRate } = require('./functions');
 
 const app = express();
 app.use(express.json());
@@ -90,4 +91,15 @@ app.post('/login', validateLogin, (req, res) => {
 
 app.listen(PORT, () => {
   console.log('Online');
+});
+
+app.patch('/talker/rate/:id', validateToken, validadePatchRate, async (req, res) => {
+    const { id } = req.params;
+    const status = await editId(id, req.body);
+    if (status === 'ok') {
+    const data = await getData();
+    const person = data.find((p) => +p.id === +id);
+    return res.status(200).json(person);
+    }
+    return res.status(404).json({ message: 'Pessoa palestrante não encontrada' });
 });
