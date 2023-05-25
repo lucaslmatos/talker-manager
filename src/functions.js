@@ -6,8 +6,11 @@ const path2 = './talker.json';
 
 const getData = async () => {
   const content = await fs.readFile(join(__dirname, path2), 'utf-8');
-  const data = JSON.parse(content);
-  return data;
+  if (content) {
+    const data = JSON.parse(content);
+    return data;
+  }
+  return '[]';
 };
 
 const generateToken = (length) => {
