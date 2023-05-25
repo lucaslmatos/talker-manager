@@ -1,5 +1,5 @@
 const fs = require('fs/promises');
-const path = require('path');
+require('path');
 const { join } = require('path');
 
 const path2 = './talker.json';
