@@ -194,7 +194,7 @@ const editId = async (personId, rate) => {
   const editedData = await getData();
   const editedIn = editedData.findIndex((p) => +p.id === +personId);
   if (editedIn !== -1) {
-    editedData[editedIn].talk.rate = rate;
+    editedData[editedIn].talk.rate = rate.rate;
     await fs.writeFile(join(__dirname, path2), JSON.stringify(editedData));
     return 'ok';
   }
